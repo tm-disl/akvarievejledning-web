@@ -32,6 +32,15 @@ const query = type === 'komplet'
 
 const guide = await sanityClient.fetch(query, { slug })
 const indhold = guide.indhold ? toHTML(guide.indhold) : null
+
+// Relaterede guider
+const hurtigeGuider = type === 'komplet'
+  ? await sanityClient.fetch(`*[_type == "hurtigGuide" && defined(slug.current)] | order(raekkefoelge asc) { titel, "slug": slug.current }`)
+  : []
+
+const pillar = type === 'hurtig'
+  ? await sanityClient.fetch(`*[_type == "kompletGuide" && defined(slug.current)][0] { titel, "slug": slug.current }`)
+  : null
 ---
 
 <Layout title={guide.titel} description={guide.beskrivelse}>
@@ -90,6 +99,13 @@ const indhold = guide.indhold ? toHTML(guide.indhold) : null
     </ol>
   </nav>
 
+  {pillar && (
+    <div class="mb-6 flex items-center gap-2 text-sm text-stone-500">
+      <span>Del af serie:</span>
+      <a href={`/guide/${pillar.slug}`} class="text-teal-700 font-medium hover:underline">{pillar.titel} →</a>
+    </div>
+  )}
+
   <span class={`text-xs font-semibold uppercase tracking-wide ${type === 'komplet' ? 'text-teal-700' : 'text-emerald-700'}`}>
     {type === 'komplet' ? 'Komplet guide' : 'Hurtig guide'}
   </span>
@@ -109,5 +125,19 @@ const indhold = guide.indhold ? toHTML(guide.indhold) : null
       <p class="text-gray-500">Indhold kommer snart.</p>
     )}
   </div>
+
+  {hurtigeGuider.length > 0 && (
+    <div class="mt-12 border-t border-stone-200 pt-8">
+      <h2 class="text-xl font-bold text-stone-800 mb-4">Relaterede guider</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {hurtigeGuider.map((g: any) => (
+          <a href={`/guide/${g.slug}`} class="block bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+            <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Hurtig guide</span>
+            <p class="font-bold mt-1 text-stone-800">{g.titel}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
 
 </Layout>
