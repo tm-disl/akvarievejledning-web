@@ -1,0 +1,21 @@
+# Akvarievejledning
+
+Gratis dansk vejledning om akvarier til begyndere og øvede. Indholdet er skrevet af Adrian, der også udlejer og vedligeholder akvarier til kontorer.
+
+## Guides
+
+- [Den komplette guide til dit første akvarium](https://akvarievejledning.dk/guide/den-komplette-guide-til-dit-foerste-akvarium) — Alt om opstart, udstyr og nitrogen-cyklus
+- [Kan jeg bruge ting fra naturen i mit akvarie?](https://akvarievejledning.dk/guide/kan-jeg-bruge-ting-fra-naturen-i-mit-akvarie) — Om træ, sten og naturmaterialer
+- [De bedste første fisk](https://akvarievejledning.dk/guide/de-bedste-foerste-fisk) — Anbefalede begynderfisk til ferskvand
+- [Boost dine planter med CO2](https://akvarievejledning.dk/guide/boost-dine-planter-med-co2) — Kemisk CO2 vs. tryksat flaske
+- [Vedligeholdelse af dit akvarie](https://akvarievejledning.dk/guide/vedligeholdelse-af-dit-akvarie) — Ugentlige rutiner, filter og algebekæmpelse
+- [De 5 hyppigste begynderfejl](https://akvarievejledning.dk/guide/de-5-hyppigste-begynderfejl) — Og hvordan du undgår dem
+
+## Ofte stillede spørgsmål
+
+- [FAQ](https://akvarievejledning.dk/faq) — Svar på de mest stillede spørgsmål om akvarier
+
+## Om siden
+
+- [Om Akvarievejledning](https://akvarievejledning.dk/om-adrian) — Om Adrian og siden
+- [Akvarieudlejning til kontorer](https://akvarievejledning.dk/akvarieudlejning) — Professionel opstilling og vedligehold

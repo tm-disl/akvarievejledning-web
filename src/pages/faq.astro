@@ -1,0 +1,176 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { sanityClient } from '../lib/sanity'
+
+const spoergsmaal = await sanityClient.fetch(`
+  *[_type == "faq"] | order(raekkefoelge asc) {
+    spoergsmaal,
+    svar,
+    tags,
+    relateredeGuider
+  }
+`)
+
+const tagLabels: Record<string, string> = {
+  opstart: 'Opstart',
+  vedligehold: 'Vedligehold',
+  fisk: 'Fisk',
+  udstyr: 'Udstyr',
+  planter: 'Planter',
+  alger: 'Alger',
+  vand: 'Vand',
+  viden: 'Viden',
+}
+
+const tagColors: Record<string, string> = {
+  opstart: 'border border-blue-400 text-blue-700',
+  vedligehold: 'border border-green-400 text-green-700',
+  fisk: 'border border-cyan-400 text-cyan-700',
+  udstyr: 'border border-orange-400 text-orange-700',
+  planter: 'border border-emerald-400 text-emerald-700',
+  alger: 'border border-yellow-400 text-yellow-700',
+  vand: 'border border-sky-400 text-sky-700',
+  viden: 'border border-purple-400 text-purple-700',
+}
+
+const tagActiveColors: Record<string, string> = {
+  opstart: '#2563eb',
+  vedligehold: '#16a34a',
+  fisk: '#0891b2',
+  udstyr: '#ea580c',
+  planter: '#059669',
+  alger: '#ca8a04',
+  vand: '#0284c7',
+  viden: '#9333ea',
+}
+
+const tagOrder = ['opstart', 'vedligehold', 'fisk', 'udstyr', 'planter', 'alger', 'vand', 'viden']
+const usedTags = new Set(spoergsmaal.flatMap((item: any) => item.tags || []))
+const allTags = tagOrder.filter((tag) => usedTags.has(tag))
+---
+
+<Layout title="FAQ" description="Svar på de mest stillede spørgsmål om akvarier – hurtigt og ligetil.">
+
+  <h1 class="text-4xl font-bold text-teal-900 mb-4">Ofte stillede spørgsmål</h1>
+  <p class="text-lg text-stone-600 max-w-2xl mb-8">
+    Hurtige svar på de spørgsmål vi oftest får. Filtrer efter emne eller læs dem alle.
+  </p>
+
+  <!-- Tag filter -->
+  <div class="flex flex-wrap gap-2 mb-10" id="tag-filters">
+    <button
+      data-tag="alle"
+      data-active-color="#1f2937"
+      class="tag-btn px-4 py-1.5 rounded-full text-sm font-medium border border-gray-300 text-gray-700 transition"
+    >
+      Alle
+    </button>
+    {allTags.map((tag) => (
+      <button
+        data-tag={tag}
+        data-active-color={tagActiveColors[tag] ?? '#1f2937'}
+        class={`tag-btn px-4 py-1.5 rounded-full text-sm font-medium transition ${tagColors[tag] ?? 'border border-gray-400 text-gray-700'} hover:opacity-80`}
+      >
+        {tagLabels[tag] ?? tag}
+      </button>
+    ))}
+  </div>
+
+  <!-- FAQ cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="faq-grid">
+    {spoergsmaal.map((item: any, index: number) => (
+      <>
+      {index === 4 && (
+        <div class="faq-image rounded-2xl overflow-hidden shadow-sm">
+          <img src="https://picsum.photos/seed/faq-img1/800/600" alt="Akvarium" class="w-full h-full object-cover" />
+        </div>
+      )}
+      {index === 9 && (
+        <div class="faq-image rounded-2xl overflow-hidden shadow-sm">
+          <img src="https://picsum.photos/seed/faq-img2/800/600" alt="Akvarium" class="w-full h-full object-cover" />
+        </div>
+      )}
+      <div
+        class="faq-card bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition"
+        data-tags={JSON.stringify(item.tags || [])}
+      >
+        <h2 class="text-lg font-bold text-stone-800 mb-3">{item.spoergsmaal}</h2>
+        <div class="text-stone-600 text-sm mb-4 flex flex-col gap-2">
+            {item.svar.split('\n\n').map((afsnit: string) => (
+              <p>{afsnit}</p>
+            ))}
+          </div>
+        <div class="flex flex-wrap gap-2 mb-3">
+          {(item.tags || []).map((tag: string) => (
+            <span class={`text-xs px-2 py-1 rounded-full font-medium ${tagColors[tag] ?? 'bg-gray-100 text-gray-700'}`}>
+              {tagLabels[tag] ?? tag}
+            </span>
+          ))}
+        </div>
+        {item.relateredeGuider && item.relateredeGuider.length > 0 && (
+          <div class="flex flex-col gap-1 border-t border-gray-100 pt-3">
+            {item.relateredeGuider.map((link: any) => (
+              <a href={link.url} class="text-xs text-blue-700 hover:underline">{link.tekst} →</a>
+            ))}
+          </div>
+        )}
+      </div>
+      </>
+    ))}
+  </div>
+
+</Layout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-btn')
+  const cards = document.querySelectorAll<HTMLElement>('.faq-card')
+  const images = document.querySelectorAll<HTMLElement>('.faq-image')
+
+  let activeTag = 'alle'
+
+  // Aktiver "Alle" ved sideindlæsning
+  const alleBtn = document.querySelector<HTMLButtonElement>('[data-tag="alle"]')
+  if (alleBtn) {
+    alleBtn.style.backgroundColor = '#1f2937'
+    alleBtn.style.color = 'white'
+    alleBtn.style.borderColor = '#1f2937'
+  }
+
+  function applyFilter(tag: string) {
+    activeTag = tag
+
+    // Nulstil alle knapper
+    buttons.forEach((b) => {
+      b.style.backgroundColor = ''
+      b.style.color = ''
+      b.style.borderColor = ''
+    })
+    // Sæt aktiv knap
+    const activeBtn = document.querySelector<HTMLButtonElement>(`[data-tag="${tag}"]`)
+    if (activeBtn) {
+      const color = activeBtn.dataset.activeColor ?? '#1f2937'
+      activeBtn.style.backgroundColor = color
+      activeBtn.style.color = 'white'
+      activeBtn.style.borderColor = color
+    }
+
+    // Filter cards
+    cards.forEach((card) => {
+      const cardTags: string[] = JSON.parse(card.dataset.tags || '[]')
+      card.style.display = (tag === 'alle' || cardTags.includes(tag)) ? 'block' : 'none'
+    })
+
+    // Vis billeder kun når "Alle" er valgt
+    images.forEach((img) => {
+      img.style.display = tag === 'alle' ? 'block' : 'none'
+    })
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag!
+      // Klik på allerede aktivt tag → deselect til "Alle"
+      applyFilter(tag !== 'alle' && tag === activeTag ? 'alle' : tag)
+    })
+  })
+</script>

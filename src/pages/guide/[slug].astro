@@ -1,0 +1,113 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import { sanityClient } from '../../lib/sanity'
+import { toHTML } from '@portabletext/to-html'
+
+export async function getStaticPaths() {
+  const kompletGuider = await sanityClient.fetch(`
+    *[_type == "kompletGuide" && defined(slug.current)] {
+      "slug": slug.current,
+      "type": "komplet"
+    }
+  `)
+  const hurtigeGuider = await sanityClient.fetch(`
+    *[_type == "hurtigGuide" && defined(slug.current)] {
+      "slug": slug.current,
+      "type": "hurtig"
+    }
+  `)
+
+  return [...kompletGuider, ...hurtigeGuider].map((guide) => ({
+    params: { slug: guide.slug },
+    props: { type: guide.type },
+  }))
+}
+
+const { slug } = Astro.params
+const { type } = Astro.props
+
+const query = type === 'komplet'
+  ? `*[_type == "kompletGuide" && slug.current == $slug][0]`
+  : `*[_type == "hurtigGuide" && slug.current == $slug][0]`
+
+const guide = await sanityClient.fetch(query, { slug })
+const indhold = guide.indhold ? toHTML(guide.indhold) : null
+---
+
+<Layout title={guide.titel} description={guide.beskrivelse}>
+
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": guide.titel,
+    "description": guide.beskrivelse,
+    "dateModified": guide.sidstOpdateret,
+    "author": {
+      "@type": "Person",
+      "name": "Adrian",
+      "url": "https://akvarievejledning.dk/om-adrian"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Akvarievejledning",
+      "url": "https://akvarievejledning.dk"
+    },
+    "url": `https://akvarievejledning.dk/guide/${slug}`
+  })} />
+
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Forside",
+        "item": "https://akvarievejledning.dk"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Guides",
+        "item": "https://akvarievejledning.dk/guide"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": guide.titel,
+        "item": `https://akvarievejledning.dk/guide/${slug}`
+      }
+    ]
+  })} />
+
+  <nav aria-label="breadcrumb" class="mb-6 text-sm text-gray-500">
+    <ol class="flex items-center gap-2">
+      <li><a href="/" class="hover:text-blue-700 hover:underline">Forside</a></li>
+      <li class="select-none">›</li>
+      <li><a href="/guide" class="hover:text-blue-700 hover:underline">Guides</a></li>
+      <li class="select-none">›</li>
+      <li class="text-gray-800 font-medium truncate">{guide.titel}</li>
+    </ol>
+  </nav>
+
+  <span class={`text-xs font-semibold uppercase tracking-wide ${type === 'komplet' ? 'text-teal-700' : 'text-emerald-700'}`}>
+    {type === 'komplet' ? 'Komplet guide' : 'Hurtig guide'}
+  </span>
+
+  <h1 class="text-4xl font-bold text-teal-900 mt-1 mb-4">{guide.titel}</h1>
+
+  {guide.sidstOpdateret && (
+    <p class="text-lg text-stone-400 mb-12">
+      Sidst opdateret: {new Date(guide.sidstOpdateret).toLocaleDateString('da-DK', { year: 'numeric', month: 'long' })}
+    </p>
+  )}
+
+  <div class="prose prose-blue max-w-none">
+    {indhold ? (
+      <Fragment set:html={indhold} />
+    ) : (
+      <p class="text-gray-500">Indhold kommer snart.</p>
+    )}
+  </div>
+
+</Layout>
