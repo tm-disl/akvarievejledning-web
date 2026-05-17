@@ -81,13 +81,15 @@ const allTags = tagOrder.filter((tag) => usedTags.has(tag))
     {spoergsmaal.map((item: any, index: number) => (
       <>
       {index === 4 && (
-        <div class="faq-image rounded-2xl overflow-hidden shadow-sm">
-          <img src="https://picsum.photos/seed/faq-img1/800/600" alt="Akvarium" class="w-full h-full object-cover" />
+        <div class="faq-image relative rounded-2xl overflow-hidden shadow-sm">
+          <img src="/planteakvarium-groen.jpg" alt="Grønne planter i et klart akvarium" class="w-full h-full object-cover" />
+          <span class="absolute bottom-2 right-2 text-white/80 text-xs font-medium" style="writing-mode: vertical-rl; transform: rotate(180deg);">Foto: Huy Phan / Unsplash</span>
         </div>
       )}
       {index === 9 && (
-        <div class="faq-image rounded-2xl overflow-hidden shadow-sm">
-          <img src="https://picsum.photos/seed/faq-img2/800/600" alt="Akvarium" class="w-full h-full object-cover" />
+        <div class="faq-image relative rounded-2xl overflow-hidden shadow-sm">
+          <img src="/akvarium-fisk-og-sten.jpg" alt="Akvarium med fisk, planter og sten" class="w-full h-full object-cover" />
+          <span class="absolute bottom-2 right-2 text-white/80 text-xs font-medium" style="writing-mode: vertical-rl; transform: rotate(180deg);">Foto: Yosuke Ota / Unsplash</span>
         </div>
       )}
       <div
