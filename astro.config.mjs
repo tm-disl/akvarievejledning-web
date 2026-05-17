@@ -17,8 +17,10 @@ export default defineConfig({
     '/hvordan-planlaegger-du-det-ideelle-akvarium/': '/guide/vedligeholdelse-af-dit-akvarie',
     '/ressourcer': '/guide',
     '/ressourcer/': '/guide',
-    '/author/adrian': '/om-adrian',
-    '/author/adrian/': '/om-adrian',
+    '/author/adrian': '/om-akvarievejledning',
+    '/author/adrian/': '/om-akvarievejledning',
+    '/om-adrian': '/om-akvarievejledning',
+    '/om-adrian/': '/om-akvarievejledning',
   },
   vite: {
     plugins: [tailwindcss()]
