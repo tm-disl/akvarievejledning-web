@@ -21,6 +21,10 @@ export default defineConfig({
     '/author/adrian/': '/om-akvarievejledning',
     '/om-adrian': '/om-akvarievejledning',
     '/om-adrian/': '/om-akvarievejledning',
+    '/om': '/om-akvarievejledning',
+    '/om/': '/om-akvarievejledning',
+    '/miniguide/saadan-undgaar-du-de-hyppigste-problemer': '/guide/de-5-hyppigste-begynderfejl',
+    '/miniguide/saadan-undgaar-du-de-hyppigste-problemer/': '/guide/de-5-hyppigste-begynderfejl',
   },
   vite: {
     plugins: [tailwindcss()]
